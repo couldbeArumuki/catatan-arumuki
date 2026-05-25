@@ -19,6 +19,8 @@ const posts = await getVisiblePosts();
 const sidebar = buildSidebar(posts);
 const { post } = Astro.props;
 const { Content } = await render(post);
+const words = post.body.trim().split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(words / 200));
 
 const currentSlug = getPostSlug(post);
 const currentIndex = posts.findIndex((item) => getPostSlug(item) === currentSlug);
@@ -28,10 +30,12 @@ const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
 
 <BaseLayout title={post.data.title} description={post.data.description} sidebar={sidebar}>
   <article class="post-detail">
+    <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
     <a href={withBase('')}>← Back to Home</a>
     <h1>{post.data.title}</h1>
     <div class="post-meta">
       <span>{formatDate(post.data.date)}</span>
+      <span>{readingTime} min read</span>
       <a class="badge" href={withBase(`category/${encodeURIComponent(post.data.category)}/`)}>
         {post.data.category}
       </a>
@@ -67,5 +71,30 @@ const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
         <span></span>
       )}
     </div>
+    <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+      ↑ Top
+    </button>
   </article>
+
+  <script is:inline>
+    (() => {
+      const progress = document.querySelector('[data-reading-progress]');
+      const backToTop = document.querySelector('[data-back-to-top]');
+      if (!(progress instanceof HTMLElement) || !(backToTop instanceof HTMLButtonElement)) return;
+
+      const updateUI = () => {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+        progress.style.transform = `scaleX(${Math.min(Math.max(ratio, 0), 1)})`;
+        backToTop.classList.toggle('visible', window.scrollY > 320);
+      };
+
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', updateUI, { passive: true });
+      updateUI();
+    })();
+  </script>
 </BaseLayout>
