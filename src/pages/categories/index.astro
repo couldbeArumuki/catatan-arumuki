@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../../lib/content';
+import { buildSidebar } from '../../lib/sidebar';
+import { getCategoryCounts } from '../../lib/posts';
+import { withBase } from '../../lib/urls';
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+const categories = getCategoryCounts(posts);
+---
+
+<BaseLayout title="Categories" description="Explore entries by category." sidebar={sidebar}>
+  <section>
+    <h2>Categories</h2>
+    <div class="post-list">
+      {categories.map((category) => (
+        <article class="post-item">
+          <h3>
+            <a href={withBase(`category/${encodeURIComponent(category.name)}/`)}>
+              {category.name}
+            </a>
+          </h3>
+          <p>{category.count} entries</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

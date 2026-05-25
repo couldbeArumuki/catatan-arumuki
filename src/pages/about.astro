@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../lib/content';
+import { buildSidebar } from '../lib/sidebar';
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+---
+
+<BaseLayout title="About" description="Learn about the diary behind Catatan Arumuki." sidebar={sidebar}>
+  <section class="card">
+    <h2>About this journal</h2>
+    <p>
+      Catatan Arumuki is a personal notebook of gentle observations—quiet mornings,
+      familiar places, and the small details that make them memorable.
+    </p>
+    <p>
+      This space is intentionally simple. Each entry is a short reflection meant to be read
+      slowly, like a letter left on the kitchen table.
+    </p>
+  </section>
+</BaseLayout>
