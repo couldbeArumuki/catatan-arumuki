@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../lib/content';
+import { buildSidebar } from '../lib/sidebar';
+import { formatDate } from '../lib/date';
+import { withBase } from '../lib/urls';
+import { getPostSlug } from '../lib/posts';
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+---
+
+<BaseLayout title="Home" description="Elegant diary notes and short reflections." sidebar={sidebar}>
+  <section>
+    <h2>Latest entries</h2>
+    <div class="post-list">
+      {posts.map((post) => {
+        const slug = getPostSlug(post);
+        return (
+          <article class="post-item">
+            <h3>
+              <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
+            </h3>
+            <div class="post-meta">
+              <span>{formatDate(post.data.date)}</span>
+              <a
+                class="badge"
+                href={withBase(`category/${encodeURIComponent(post.data.category)}/`)}
+              >
+                {post.data.category}
+              </a>
+            </div>
+            {post.data.tags?.length ? (
+              <div class="tags">
+                {post.data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            ) : null}
+            <p>{post.data.description}</p>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../lib/content';
+import { buildSidebar } from '../lib/sidebar';
+import { getPostSlug, groupPostsByYear } from '../lib/posts';
+import { formatDate } from '../lib/date';
+import { withBase } from '../lib/urls';
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+const groups = groupPostsByYear(posts);
+---
+
+<BaseLayout title="Archive" description="Browse entries grouped by year." sidebar={sidebar}>
+  <section>
+    <h2>Archive</h2>
+    {groups.map((group) => (
+      <div class="post-item">
+        <h3>{group.year}</h3>
+        <ul class="list">
+          {group.posts.map((post) => {
+            const slug = getPostSlug(post);
+            return (
+              <li>
+                <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
+                <br />
+                <small>{formatDate(post.data.date)}</small>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </section>
+</BaseLayout>

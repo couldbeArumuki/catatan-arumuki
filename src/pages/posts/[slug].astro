@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../../lib/content';
+import { buildSidebar } from '../../lib/sidebar';
+import { formatDate } from '../../lib/date';
+import { withBase } from '../../lib/urls';
+import { getPostSlug } from '../../lib/posts';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getVisiblePosts();
+  return posts.map((post) => ({
+    params: { slug: getPostSlug(post) },
+    props: { post },
+  }));
+}
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const currentSlug = getPostSlug(post);
+const currentIndex = posts.findIndex((item) => getPostSlug(item) === currentSlug);
+const previousPost = currentIndex >= 0 ? posts[currentIndex + 1] : null;
+const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} sidebar={sidebar}>
+  <article class="post-detail">
+    <a href={withBase('')}>← Back to Home</a>
+    <h1>{post.data.title}</h1>
+    <div class="post-meta">
+      <span>{formatDate(post.data.date)}</span>
+      <a class="badge" href={withBase(`category/${encodeURIComponent(post.data.category)}/`)}>
+        {post.data.category}
+      </a>
+    </div>
+
+    {post.data.tags?.length ? (
+      <div class="tags">
+        {post.data.tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    ) : null}
+
+    {post.data.coverImage ? (
+      <div class="cover">
+        <img src={withBase(post.data.coverImage)} alt={post.data.title} loading="lazy" />
+      </div>
+    ) : null}
+
+    <div class="post-content">
+      <Content />
+    </div>
+
+    <div class="post-meta" style="margin-top: 2rem;">
+      {previousPost ? (
+        <a href={withBase(`posts/${getPostSlug(previousPost)}/`)}>← Previous entry</a>
+      ) : (
+        <span></span>
+      )}
+      {nextPost ? (
+        <a href={withBase(`posts/${getPostSlug(nextPost)}/`)}>Next entry →</a>
+      ) : (
+        <span></span>
+      )}
+    </div>
+  </article>
+</BaseLayout>

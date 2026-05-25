@@ -1,0 +1,120 @@
+---
+import { formatDate } from '../lib/date';
+import { withBase } from '../lib/urls';
+
+const {
+  aboutText,
+  categories,
+  tags,
+  latestPosts,
+  searchIndex,
+  tagLimit = 12,
+} = Astro.props;
+
+const tagList = tags.slice(0, tagLimit);
+const searchData = searchIndex.map((post) => ({
+  ...post,
+  url: withBase(`posts/${post.slug}/`),
+}));
+---
+
+<aside>
+  <div class="card">
+    <h2>About</h2>
+    <p>{aboutText}</p>
+  </div>
+
+  <div class="card" data-search data-posts={JSON.stringify(searchData)}>
+    <label for="search-input"><strong>Search</strong></label>
+    <input
+      id="search-input"
+      class="search-input"
+      type="search"
+      placeholder="Search entries"
+      aria-label="Search posts"
+      data-search-input
+    />
+    <div class="search-results" aria-live="polite" data-search-results></div>
+  </div>
+
+  <div class="card">
+    <h2>Categories</h2>
+    <ul class="list">
+      {categories.map((category) => (
+        <li>
+          <a href={withBase(`category/${encodeURIComponent(category.name)}/`)}>
+            {category.name} ({category.count})
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Tags</h2>
+    <div class="tags">
+      {tagList.map((tag) => (
+        <span class="tag">{tag.name}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Latest posts</h2>
+    <ul class="list">
+      {latestPosts.map((post) => (
+        <li>
+          <a href={withBase(`posts/${post.slug}/`)}>{post.title}</a>
+          <br />
+          <small>{formatDate(post.date)}</small>
+        </li>
+      ))}
+    </ul>
+  </div>
+</aside>
+
+<script is:inline type="module">
+  const roots = document.querySelectorAll('[data-search]');
+  const matchPost = (post, query) => {
+    const fields = [post.title, post.description, post.category, ...(post.tags ?? [])]
+      .join(' ')
+      .toLowerCase();
+    return fields.includes(query);
+  };
+
+  const renderResults = (container, items, query) => {
+    if (!query) {
+      container.innerHTML = '';
+      return;
+    }
+
+    if (!items.length) {
+      container.innerHTML = '<small>No matching posts.</small>';
+      return;
+    }
+
+    container.innerHTML = items
+      .map(
+        (item) =>
+          `<a href="${item.url}"><strong>${item.title}</strong><br /><small>${item.category}</small></a>`,
+      )
+      .join('');
+  };
+
+  roots.forEach((root) => {
+    const input = root.querySelector('[data-search-input]');
+    const results = root.querySelector('[data-search-results]');
+    if (!input || !results) return;
+    const posts = JSON.parse(root.dataset.posts || '[]');
+
+    const update = () => {
+      const query = input.value.trim().toLowerCase();
+      const filtered = query
+        ? posts.filter((post) => matchPost(post, query)).slice(0, 8)
+        : [];
+      renderResults(results, filtered, query);
+    };
+
+    input.addEventListener('input', update);
+  });
+</script>

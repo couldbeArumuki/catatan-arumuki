@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../../lib/content';
+import { buildSidebar } from '../../lib/sidebar';
+import { formatDate } from '../../lib/date';
+import { withBase } from '../../lib/urls';
+import { getPostSlug } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getVisiblePosts();
+  const categories = Array.from(new Set(posts.map((post) => post.data.category)));
+
+  return categories.map((category) => ({
+    params: { category },
+    props: { category },
+  }));
+}
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+const { category } = Astro.props;
+const filtered = posts.filter((post) => post.data.category === category);
+---
+
+<BaseLayout title={category} description={`Entries filed under ${category}.`} sidebar={sidebar}>
+  <section>
+    <h2>{category}</h2>
+    <div class="post-list">
+      {filtered.map((post) => {
+        const slug = getPostSlug(post);
+        return (
+          <article class="post-item">
+            <h3>
+              <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
+            </h3>
+            <div class="post-meta">
+              <span>{formatDate(post.data.date)}</span>
+              <span class="badge">{post.data.category}</span>
+            </div>
+            <p>{post.data.description}</p>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+</BaseLayout>
