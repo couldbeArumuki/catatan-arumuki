@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#efe5d6" />
+  <rect x="760" y="120" width="340" height="460" fill="#d7c2a8" opacity="0.6" />
+  <rect x="820" y="180" width="220" height="340" fill="#c2a586" opacity="0.75" />
+  <text x="90" y="340" font-size="60" font-family="Georgia, serif" fill="#6a4a3c">
+    Postcards from Bandung
+  </text>
+  <text x="90" y="410" font-size="28" font-family="Georgia, serif" fill="#8a6d59">
+    Travel Notes
+  </text>
+</svg>

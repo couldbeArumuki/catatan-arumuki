@@ -6,6 +6,9 @@ category: Short Stories
 tags:
   - Fiction
   - Night
+coverImage: /images/the-lantern-story.svg
+popular: true
+popularity: 92
 ---
 
 She placed the lantern by the window every evening, believing it would keep her memories warm. In its glass belly, the light collected colors from every dusk and held them like pressed flowers.

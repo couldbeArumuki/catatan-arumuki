@@ -6,7 +6,7 @@ const {
   aboutText,
   categories,
   tags,
-  latestPosts,
+  popularPosts = [],
   searchIndex,
   tagLimit = 12,
 } = Astro.props;
@@ -60,18 +60,98 @@ const searchData = searchIndex.map((post) => ({
   </div>
 
   <div class="card">
-    <h2>Latest posts</h2>
-    <ul class="list">
-      {latestPosts.map((post) => (
-        <li>
-          <a href={withBase(`posts/${post.slug}/`)}>{post.title}</a>
-          <br />
-          <small>{formatDate(post.date)}</small>
-        </li>
-      ))}
-    </ul>
+    <h2>Popular posts</h2>
+    {popularPosts.length ? (
+      <div class="popular-grid">
+        {popularPosts.map((post) => (
+          <a
+            class="popular-item"
+            href={withBase(`posts/${post.slug}/`)}
+            aria-label={`Read ${post.title}`}
+          >
+            {post.coverImage ? (
+              <img
+                src={withBase(post.coverImage)}
+                alt={post.title}
+                loading="lazy"
+                width="360"
+                height="360"
+              />
+            ) : (
+              <div class="popular-placeholder" aria-hidden="true"></div>
+            )}
+            <span class="popular-overlay">
+              <strong>{post.title}</strong>
+              <small>{formatDate(post.date)}</small>
+            </span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="muted">No popular posts yet.</p>
+    )}
   </div>
 </aside>
+
+<style>
+  .popular-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .popular-item {
+    position: relative;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: rgba(106, 74, 60, 0.08);
+  }
+
+  .popular-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .popular-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(140deg, rgba(106, 74, 60, 0.2), rgba(106, 74, 60, 0.05));
+  }
+
+  .popular-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    color: #fff;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.7));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .popular-overlay small {
+    opacity: 0.85;
+  }
+
+  .popular-item:hover .popular-overlay,
+  .popular-item:focus-visible .popular-overlay {
+    opacity: 1;
+  }
+
+  .muted {
+    color: var(--muted);
+    margin: 0.5rem 0 0;
+  }
+</style>
 
 <script is:inline type="module">
   const roots = document.querySelectorAll('[data-search]');

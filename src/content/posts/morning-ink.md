@@ -7,6 +7,8 @@ tags:
   - Morning
   - Reflection
 coverImage: /covers/morning-ink.svg
+popular: true
+popularity: 85
 ---
 
 The kettle hummed while the world outside still slept. I opened the window just enough to let in the scent of rain and watched the streetlights fade.
