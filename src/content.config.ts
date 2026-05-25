@@ -10,6 +10,8 @@ const postsCollection = defineCollection({
     category: z.string(),
     tags: z.array(z.string()).default([]),
     coverImage: z.string().optional(),
+    popular: z.boolean().optional(),
+    popularity: z.number().optional(),
     draft: z.boolean().optional().default(false),
   }),
 });

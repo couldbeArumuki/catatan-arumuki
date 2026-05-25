@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#1f1b16" />
+  <circle cx="920" cy="220" r="140" fill="#e2b596" opacity="0.25" />
+  <circle cx="920" cy="220" r="80" fill="#e2b596" opacity="0.45" />
+  <text x="90" y="360" font-size="64" font-family="Georgia, serif" fill="#f2eee8">
+    The Lantern Story
+  </text>
+  <text x="90" y="430" font-size="28" font-family="Georgia, serif" fill="#b9b0a3">
+    Short Stories
+  </text>
+</svg>

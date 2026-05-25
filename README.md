@@ -16,6 +16,14 @@ Expected URL: https://couldbearumuki.github.io/catatan-arumuki/
 - Post pages include a lightweight **reading progress bar** at the top.
 - Post pages include a **Back to Top** button that appears while scrolling.
 
+## Cover images & popular posts
+
+To add a cover image for a post:
+
+1. Place the image under `public/images/`.
+2. Add a frontmatter field: `coverImage: "/images/your-file.jpg"`.
+3. (Optional) Mark popular posts with `popular: true` and set a `popularity` number to control ordering.
+
 ## Screenshot
 
 ![Reading progress and back-to-top](./public/screenshots/post-reading-progress.png)

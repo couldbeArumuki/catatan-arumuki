@@ -81,6 +81,26 @@ img {
   background: var(--card);
 }
 
+.site-wordmark {
+  margin-top: 1.75rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.4rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.wordmark-top {
+  font-size: 2.4rem;
+  font-weight: 600;
+}
+
+.wordmark-bottom {
+  font-size: 1rem;
+  letter-spacing: 0.5rem;
+  color: var(--muted);
+}
+
 .page {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -276,5 +296,19 @@ a:focus-visible {
 
   aside {
     order: 2;
+  }
+
+  .site-wordmark {
+    margin-top: 1.25rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .wordmark-top {
+    font-size: 1.9rem;
+  }
+
+  .wordmark-bottom {
+    font-size: 0.9rem;
+    letter-spacing: 0.4rem;
   }
 }

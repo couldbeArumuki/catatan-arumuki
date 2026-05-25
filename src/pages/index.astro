@@ -13,11 +13,34 @@ const sidebar = buildSidebar(posts);
 <BaseLayout title="Home" description="Elegant diary notes and short reflections." sidebar={sidebar}>
   <section>
     <h2>Latest entries</h2>
-    <div class="post-list">
+    <div class="post-grid">
       {posts.map((post) => {
         const slug = getPostSlug(post);
+        const coverImage = post.data.coverImage
+          ? withBase(post.data.coverImage)
+          : null;
         return (
-          <article class="post-item">
+          <article class="post-card">
+            <a
+            class="post-card__media"
+            href={withBase(`posts/${slug}/`)}
+            aria-label={`Read ${post.data.title}`}
+            >
+            {coverImage ? (
+              <img
+                src={coverImage}
+                alt={post.data.title}
+                loading="lazy"
+                width="640"
+                height="360"
+              />
+            ) : (
+              <div class="post-card__placeholder" aria-hidden="true">
+                <span>{post.data.title}</span>
+              </div>
+            )}
+            </a>
+            <div class="post-card__body">
             <h3>
               <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
             </h3>
@@ -38,9 +61,61 @@ const sidebar = buildSidebar(posts);
               </div>
             ) : null}
             <p>{post.data.description}</p>
+            </div>
           </article>
         );
       })}
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .post-card__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: rgba(106, 74, 60, 0.08);
+  }
+
+  .post-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .post-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    color: var(--muted);
+    background: linear-gradient(140deg, rgba(106, 74, 60, 0.2), rgba(106, 74, 60, 0.05));
+  }
+
+  .post-card__body {
+    padding: 1.4rem 1.6rem 1.6rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+</style>
