@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../../lib/content';
+import { buildSidebar } from '../../lib/sidebar';
+import { withBase } from '../../lib/urls';
+import { getPostSlug } from '../../lib/posts';
+
+const posts = await getVisiblePosts();
+const sidebar = buildSidebar(posts);
+---
+
+<BaseLayout title="Cerita" description="Kumpulan cerita pendek dan catatan pilihan." sidebar={sidebar}>
+  <section class="card">
+    <h2>Cerita</h2>
+    <p>Halaman ini jadi pintu cepat buat baca ulang cerita pilihan dari catatan yang sudah terbit.</p>
+    <ul class="list">
+      {posts.slice(0, 5).map((post) => (
+        <li>
+          <a href={withBase(`posts/${getPostSlug(post)}/`)}>{post.data.title}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
