@@ -1,11 +1,11 @@
 export const siteProfile = {
   name: 'Catatan Arumuki',
   owner: 'Arumuki',
-  tagline: 'Warm diary notes for quiet days.',
+  tagline: 'Catatan kecil sehari-hari, kopi, dan cerita pelan.',
   description:
-    'A personal notebook of diary entries, travel moments, and short stories written slowly for cozy reading.',
+    'Ini rumah kecilku di internet. Tempat buat nyimpen hal-hal sederhana: dari hari biasa, perjalanan singkat, sampai potongan cerita yang ingin kuingat lagi.',
   aboutBio:
-    'Hi, I\'m Arumuki. I write diary notes, travel snippets, and little stories about ordinary days that deserve to be remembered.',
+    'Aku Arumuki. Blog ini kubikin biar hal-hal kecil yang sering lewat gitu aja tetap punya tempat untuk pulang.',
   topics: ['Diary', 'Travel', 'Short Stories', 'Slow Living', 'Coffee Walks'],
   socials: [
     { label: 'Instagram', href: 'https://instagram.com/arumuki' },

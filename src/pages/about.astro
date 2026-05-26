@@ -9,21 +9,34 @@ const posts = await getVisiblePosts();
 const sidebar = buildSidebar(posts);
 ---
 
-<BaseLayout title="About" description="Learn about the diary behind Catatan Arumuki." sidebar={sidebar}>
+<BaseLayout title="About" description="Kenalan santai dengan Arumuki dan cerita di balik blog ini." sidebar={sidebar}>
   <section class="card about">
     <img src={withBase(defaultAvatar)} alt="Arumuki avatar illustration" width="220" height="220" />
     <div>
-      <h2>Hi, I&apos;m {siteProfile.owner}</h2>
+      <h2>Hai, aku {siteProfile.owner} 🌿</h2>
       <p>{siteProfile.aboutBio}</p>
+      <p>
+        Aku suka nulis dengan tempo pelan—kadang soal hari yang biasa banget, kadang soal perjalanan kecil yang
+        ternyata ninggalin rasa panjang. Buatku, catatan sederhana juga layak dirayakan.
+      </p>
 
-      <h3>What I usually write about</h3>
+      <h3>Kenapa bikin blog ini?</h3>
+      <p>
+        Karena aku pengin punya ruang yang nggak buru-buru. Tempat untuk ngobrol, nyimpen cerita, dan balik lagi
+        kapan pun saat butuh merasa “pulang”.
+      </p>
+
+      <h3>Hal yang sering nemenin aku</h3>
+      <p>Anime & manga, secangkir kopi hangat, jalan sore, dan sesi nulis larut malam.</p>
+
+      <h3>Aku biasanya nulis tentang</h3>
       <div class="tags">
         {siteProfile.topics.map((topic) => (
           <span class="tag">{topic}</span>
         ))}
       </div>
 
-      <h3>Find me here</h3>
+      <h3>Kalau mau say hi</h3>
       <ul class="list">
         {siteProfile.socials.map((social) => (
           <li>
