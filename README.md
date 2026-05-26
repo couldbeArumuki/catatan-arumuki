@@ -15,6 +15,10 @@ Expected URL: https://couldbearumuki.github.io/catatan-arumuki/
 - Post pages now show **estimated reading time**.
 - Post pages include a lightweight **reading progress bar** at the top.
 - Post pages include a **Back to Top** button that appears while scrolling.
+- Homepage now includes a personalized **hero section**, quick **search**, and category highlights.
+- Navigation is now **sticky**, includes key sections, and has a **dark mode toggle** with saved preference.
+- Added `/about` refresh plus default local assets for **avatar** and **cover fallback**.
+- Post detail pages now include **related posts** and use a **fallback cover image** when needed.
 
 ## Cover images & popular posts
 

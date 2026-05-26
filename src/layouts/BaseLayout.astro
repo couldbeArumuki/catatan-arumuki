@@ -2,10 +2,11 @@
 import '../styles/global.css';
 import Sidebar from '../components/Sidebar.astro';
 import { withBase } from '../lib/urls';
+import { navLinks, siteProfile } from '../lib/site';
 
 const { title, description, sidebar } = Astro.props;
-const pageTitle = title ? `${title} | Catatan Arumuki` : 'Catatan Arumuki';
-const metaDescription = description ?? 'A quiet corner for thoughtful diary entries.';
+const pageTitle = title ? `${title} | ${siteProfile.name}` : siteProfile.name;
+const metaDescription = description ?? siteProfile.description;
 ---
 
 <!doctype html>
@@ -18,22 +19,30 @@ const metaDescription = description ?? 'A quiet corner for thoughtful diary entr
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:type" content="website" />
+    <script is:inline>
+      (() => {
+        const preferred = window.localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = preferred === 'light' || preferred === 'dark' ? preferred : systemDark ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
-      <div class="container">
-        <h1 class="site-title"><a href={withBase('')}>Catatan Arumuki</a></h1>
-        <nav class="site-nav" aria-label="Primary">
-          <a href={withBase('')}>Home</a>
-          <a href={withBase('cerita/')}>Cerita</a>
-          <a href={withBase('about/')}>About</a>
-          <a href={withBase('archive/')}>Archive</a>
-          <a href={withBase('categories/')}>Categories</a>
+      <div class="container site-header__inner">
+        <a class="site-title" href={withBase('')}>{siteProfile.name}</a>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="site-nav">
+          Menu
+        </button>
+        <nav class="site-nav" id="site-nav" aria-label="Primary" data-site-nav>
+          {navLinks.map((link) => (
+            <a href={withBase(link.href)}>{link.label}</a>
+          ))}
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode">
+            🌙
+          </button>
         </nav>
-        <div class="site-wordmark" aria-hidden="true">
-          <span class="wordmark-top">CATATAN</span>
-          <span class="wordmark-bottom">ARUMUKI</span>
-        </div>
       </div>
     </header>
 
@@ -45,9 +54,51 @@ const metaDescription = description ?? 'A quiet corner for thoughtful diary entr
     </div>
 
     <footer class="footer">
-      <div class="container">
-        <p>Written with Astro. Crafted for quiet evenings and careful memories.</p>
+      <div class="container footer__inner">
+        <div>
+          <strong>{siteProfile.name}</strong>
+          <p>Written slowly for cozy reading moments.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Footer">
+          {navLinks.map((link) => (
+            <a href={withBase(link.href)}>{link.label}</a>
+          ))}
+        </nav>
+        <div class="footer-social">
+          {siteProfile.socials.map((social) => (
+            <a href={social.href} target="_blank" rel="noopener noreferrer">{social.label}</a>
+          ))}
+        </div>
+        <p class="footer-copy">© {new Date().getFullYear()} {siteProfile.owner}</p>
       </div>
     </footer>
+    <script is:inline type="module">
+      const applyThemeIcon = () => {
+        const theme = document.documentElement.dataset.theme ?? 'light';
+        document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+          toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        });
+      };
+
+      applyThemeIcon();
+
+      document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.dataset.theme = nextTheme;
+          window.localStorage.setItem('theme', nextTheme);
+          applyThemeIcon();
+        });
+      });
+
+      const menuToggle = document.querySelector('[data-menu-toggle]');
+      const siteNav = document.querySelector('[data-site-nav]');
+      if (menuToggle instanceof HTMLButtonElement && siteNav instanceof HTMLElement) {
+        menuToggle.addEventListener('click', () => {
+          const open = siteNav.classList.toggle('open');
+          menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+    </script>
   </body>
 </html>

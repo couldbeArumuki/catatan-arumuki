@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Default cover image</title>
+  <desc id="desc">Warm abstract gradient used as fallback cover for blog posts.</desc>
+  <defs>
+    <linearGradient id="cover" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6dcc9"/>
+      <stop offset="1" stop-color="#e8b995"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#cover)"/>
+  <circle cx="260" cy="190" r="160" fill="#fff3e6" opacity="0.65"/>
+  <circle cx="1070" cy="540" r="200" fill="#c36f52" opacity="0.18"/>
+  <path d="M180 530c110-110 260-160 410-110 120 40 210 40 330-10" fill="none" stroke="#7a4c3f" stroke-opacity="0.32" stroke-width="26" stroke-linecap="round"/>
+  <text x="110" y="625" fill="#694437" font-family="Georgia, serif" font-size="52">Catatan Arumuki</text>
+</svg>
