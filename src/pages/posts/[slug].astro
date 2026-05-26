@@ -6,6 +6,7 @@ import { formatDate } from '../../lib/date';
 import { withBase } from '../../lib/urls';
 import { getPostSlug } from '../../lib/posts';
 import { render } from 'astro:content';
+import { defaultCoverImage } from '../../lib/site';
 
 export async function getStaticPaths() {
   const posts = await getVisiblePosts();
@@ -26,6 +27,23 @@ const currentSlug = getPostSlug(post);
 const currentIndex = posts.findIndex((item) => getPostSlug(item) === currentSlug);
 const previousPost = currentIndex >= 0 ? posts[currentIndex + 1] : null;
 const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+const postTags = new Set(post.data.tags ?? []);
+const scoredPosts = posts
+  .filter((item) => getPostSlug(item) !== currentSlug)
+  .map((item) => {
+    const overlap = (item.data.tags ?? []).filter((tag) => postTags.has(tag)).length;
+    const sameCategory = item.data.category === post.data.category ? 2 : 0;
+    return { item, score: sameCategory + overlap };
+  })
+  .sort((a, b) => b.score - a.score || b.item.data.date.valueOf() - a.item.data.date.valueOf());
+const matchedRelatedPosts = scoredPosts
+  .filter(({ score }) => score > 0)
+  .map(({ item }) => item)
+  .slice(0, 3);
+const relatedPosts =
+  matchedRelatedPosts.length > 0
+    ? matchedRelatedPosts
+    : scoredPosts.map(({ item }) => item).slice(0, 3);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} sidebar={sidebar}>
@@ -49,11 +67,9 @@ const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
       </div>
     ) : null}
 
-    {post.data.coverImage ? (
-      <div class="cover">
-        <img src={withBase(post.data.coverImage)} alt={post.data.title} loading="lazy" />
-      </div>
-    ) : null}
+    <div class="cover">
+      <img src={withBase(post.data.coverImage ?? defaultCoverImage)} alt={post.data.title} loading="lazy" />
+    </div>
 
     <div class="post-content">
       <Content />
@@ -71,6 +87,35 @@ const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
         <span></span>
       )}
     </div>
+
+    {relatedPosts.length ? (
+      <section class="related-posts">
+        <h2>Related posts</h2>
+        <div class="post-grid">
+          {relatedPosts.map((related) => (
+            <article class="post-card">
+              <a class="post-card__media" href={withBase(`posts/${getPostSlug(related)}/`)}>
+                <img
+                  src={withBase(related.data.coverImage ?? defaultCoverImage)}
+                  alt={related.data.title}
+                  loading="lazy"
+                  width="640"
+                  height="360"
+                />
+              </a>
+              <div class="post-card__body">
+                <h3><a href={withBase(`posts/${getPostSlug(related)}/`)}>{related.data.title}</a></h3>
+                <div class="post-meta">
+                  <span>{formatDate(related.data.date)}</span>
+                  <span>{related.data.category}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ) : null}
+
     <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
       ↑ Top
     </button>
@@ -98,3 +143,48 @@ const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
     })();
   </script>
 </BaseLayout>
+
+<style>
+  .related-posts {
+    margin-top: 2.25rem;
+  }
+
+  .related-posts h2 {
+    margin-bottom: 0.8rem;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .post-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    overflow: hidden;
+  }
+
+  .post-card__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  .post-card__body {
+    padding: 0.85rem 1rem 1.1rem;
+  }
+
+  .post-card__body h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+</style>

@@ -5,20 +5,65 @@ import { buildSidebar } from '../lib/sidebar';
 import { formatDate } from '../lib/date';
 import { withBase } from '../lib/urls';
 import { getPostSlug } from '../lib/posts';
+import { defaultAvatar, defaultCoverImage, siteProfile } from '../lib/site';
 
 const posts = await getVisiblePosts();
 const sidebar = buildSidebar(posts);
+const homepageSearchData = posts.map((post) => ({
+  slug: getPostSlug(post),
+  url: withBase(`posts/${getPostSlug(post)}/`),
+  title: post.data.title,
+  description: post.data.description,
+  category: post.data.category,
+  tags: post.data.tags ?? [],
+}));
+const categorySummary = sidebar.categories.slice(0, 3);
 ---
 
 <BaseLayout title="Home" description="Elegant diary notes and short reflections." sidebar={sidebar}>
+  <section class="hero card">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Welcome to</p>
+      <h1>{siteProfile.owner}</h1>
+      <p class="hero__tagline">{siteProfile.tagline}</p>
+      <p>{siteProfile.description}</p>
+      <div class="hero__cta">
+        <a class="hero__button" href={withBase(`category/${encodeURIComponent('Diary')}/`)}>Baca Diary</a>
+        <a class="hero__button hero__button--ghost" href={withBase('archive/')}>Lihat Semua Catatan</a>
+        <a class="hero__button hero__button--ghost" href={withBase('about/')}>Tentang Aku</a>
+      </div>
+    </div>
+    <img src={withBase(defaultAvatar)} alt="Arumuki avatar illustration" width="320" height="320" />
+  </section>
+
+  <section class="card home-search" data-home-search data-posts={JSON.stringify(homepageSearchData)}>
+    <label for="home-search-input"><strong>Search posts</strong></label>
+    <input
+      id="home-search-input"
+      class="search-input"
+      type="search"
+      placeholder="Cari judul, kategori, atau tag"
+      aria-label="Search posts from homepage"
+      data-home-search-input
+    />
+    <div class="search-results" aria-live="polite" data-home-search-results></div>
+  </section>
+
+  <section class="category-grid">
+    {categorySummary.map((category) => (
+      <a class="card category-card" href={withBase(`category/${encodeURIComponent(category.name)}/`)}>
+        <h2>{category.name}</h2>
+        <p>{category.count} post tersedia</p>
+      </a>
+    ))}
+  </section>
+
   <section>
     <h2>Latest entries</h2>
     <div class="post-grid">
       {posts.map((post) => {
         const slug = getPostSlug(post);
-        const coverImage = post.data.coverImage
-          ? withBase(post.data.coverImage)
-          : null;
+        const coverImage = withBase(post.data.coverImage ?? defaultCoverImage);
         return (
           <article class="post-card">
             <a
@@ -26,7 +71,6 @@ const sidebar = buildSidebar(posts);
             href={withBase(`posts/${slug}/`)}
             aria-label={`Read ${post.data.title}`}
             >
-            {coverImage ? (
               <img
                 src={coverImage}
                 alt={post.data.title}
@@ -34,11 +78,6 @@ const sidebar = buildSidebar(posts);
                 width="640"
                 height="360"
               />
-            ) : (
-              <div class="post-card__placeholder" aria-hidden="true">
-                <span>{post.data.title}</span>
-              </div>
-            )}
             </a>
             <div class="post-card__body">
             <h3>
@@ -77,6 +116,87 @@ const sidebar = buildSidebar(posts);
     margin-top: 1.5rem;
   }
 
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+    gap: 1.4rem;
+    align-items: center;
+    background:
+      radial-gradient(circle at right top, rgba(141, 93, 73, 0.17), transparent 50%),
+      var(--card);
+  }
+
+  .hero__content h1 {
+    margin: 0.2rem 0 0.4rem;
+    font-size: clamp(2rem, 4.5vw, 2.8rem);
+    line-height: 1.15;
+  }
+
+  .hero__eyebrow {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero__tagline {
+    margin: 0.1rem 0 0.55rem;
+    color: var(--accent);
+    font-size: 1.05rem;
+  }
+
+  .hero img {
+    width: 100%;
+    max-width: 280px;
+    justify-self: center;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 0.35rem;
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .hero__button {
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff8f2;
+    font-size: 0.88rem;
+  }
+
+  .hero__button--ghost {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  .home-search {
+    margin-top: 1.25rem;
+  }
+
+  .category-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin-top: 1.25rem;
+  }
+
+  .category-card h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+  }
+
+  .category-card p {
+    margin: 0;
+    color: var(--muted);
+  }
+
   .post-card {
     display: flex;
     flex-direction: column;
@@ -101,21 +221,58 @@ const sidebar = buildSidebar(posts);
     border-radius: 0;
   }
 
-  .post-card__placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 1rem;
-    color: var(--muted);
-    background: linear-gradient(140deg, rgba(106, 74, 60, 0.2), rgba(106, 74, 60, 0.05));
-  }
-
   .post-card__body {
     padding: 1.4rem 1.6rem 1.6rem;
     display: grid;
     gap: 0.65rem;
   }
+
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
+
+<script is:inline type="module">
+  const root = document.querySelector('[data-home-search]');
+  const input = root?.querySelector('[data-home-search-input]');
+  const results = root?.querySelector('[data-home-search-results]');
+
+  const matchPost = (post, query) => {
+    const fields = [post.title, post.description, post.category, ...(post.tags ?? [])]
+      .join(' ')
+      .toLowerCase();
+    return fields.includes(query);
+  };
+
+  const renderResults = (items, query) => {
+    if (!results) return;
+    if (!query) {
+      results.innerHTML = '';
+      return;
+    }
+
+    if (!items.length) {
+      results.innerHTML = '<small>No matching posts.</small>';
+      return;
+    }
+
+    results.innerHTML = items
+      .map(
+        (item) =>
+          `<a href="${item.url}"><strong>${item.title}</strong><br /><small>${item.category}</small></a>`,
+      )
+      .join('');
+  };
+
+  if (root instanceof HTMLElement && input instanceof HTMLInputElement) {
+    const posts = JSON.parse(root.dataset.posts || '[]');
+    const update = () => {
+      const query = input.value.trim().toLowerCase();
+      const filtered = query ? posts.filter((post) => matchPost(post, query)).slice(0, 8) : [];
+      renderResults(filtered, query);
+    };
+    input.addEventListener('input', update);
+  }
+</script>

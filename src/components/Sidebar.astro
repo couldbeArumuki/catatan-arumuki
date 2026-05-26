@@ -1,6 +1,7 @@
 ---
 import { formatDate } from '../lib/date';
 import { withBase } from '../lib/urls';
+import { defaultCoverImage } from '../lib/site';
 
 const {
   aboutText,
@@ -69,17 +70,13 @@ const searchData = searchIndex.map((post) => ({
             href={withBase(`posts/${post.slug}/`)}
             aria-label={`Read ${post.title}`}
           >
-            {post.coverImage ? (
-              <img
-                src={withBase(post.coverImage)}
-                alt={post.title}
-                loading="lazy"
-                width="360"
-                height="360"
-              />
-            ) : (
-              <div class="popular-placeholder" aria-hidden="true"></div>
-            )}
+            <img
+              src={withBase(post.coverImage ?? defaultCoverImage)}
+              alt={post.title}
+              loading="lazy"
+              width="360"
+              height="360"
+            />
             <span class="popular-overlay">
               <strong>{post.title}</strong>
               <small>{formatDate(post.date)}</small>
