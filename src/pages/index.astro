@@ -20,7 +20,7 @@ const homepageSearchData = posts.map((post) => ({
 const categorySummary = sidebar.categories.slice(0, 3);
 ---
 
-<BaseLayout title="Home" description="Elegant diary notes and short reflections." sidebar={sidebar}>
+<BaseLayout title="Home" description="Catatan hangat sehari-hari dari Arumuki." sidebar={sidebar}>
   <section class="hero card">
     <div class="hero__content">
       <p class="hero__eyebrow">Welcome to</p>
@@ -28,9 +28,8 @@ const categorySummary = sidebar.categories.slice(0, 3);
       <p class="hero__tagline">{siteProfile.tagline}</p>
       <p>{siteProfile.description}</p>
       <div class="hero__cta">
-        <a class="hero__button" href={withBase(`category/${encodeURIComponent('Diary')}/`)}>Baca Diary</a>
-        <a class="hero__button hero__button--ghost" href={withBase('archive/')}>Lihat Semua Catatan</a>
-        <a class="hero__button hero__button--ghost" href={withBase('about/')}>Tentang Aku</a>
+        <a class="hero__button" href="#latest-posts">Baca Catatanku</a>
+        <a class="hero__button hero__button--ghost" href={withBase('about/')}>Kenal Aku Lebih Dekat</a>
       </div>
     </div>
     <img src={withBase(defaultAvatar)} alt="Arumuki avatar illustration" width="320" height="320" />
@@ -58,10 +57,10 @@ const categorySummary = sidebar.categories.slice(0, 3);
     ))}
   </section>
 
-  <section>
+  <section id="latest-posts">
     <h2>Latest entries</h2>
     <div class="post-grid">
-      {posts.map((post) => {
+      {posts.slice(0, 5).map((post) => {
         const slug = getPostSlug(post);
         const coverImage = withBase(post.data.coverImage ?? defaultCoverImage);
         return (
@@ -106,6 +105,15 @@ const categorySummary = sidebar.categories.slice(0, 3);
       })}
     </div>
   </section>
+
+  <section class="card currently">
+    <h2>Currently</h2>
+    <ul class="list">
+      <li><strong>Listening:</strong> city pop playlist sambil hujan kecil.</li>
+      <li><strong>Reading:</strong> manga slice-of-life yang bikin hati adem.</li>
+      <li><strong>At:</strong> sudut kedai kopi favorit, dekat jendela.</li>
+    </ul>
+  </section>
 </BaseLayout>
 
 <style>
@@ -121,9 +129,7 @@ const categorySummary = sidebar.categories.slice(0, 3);
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
     gap: 1.4rem;
     align-items: center;
-    background:
-      radial-gradient(circle at right top, rgba(141, 93, 73, 0.17), transparent 50%),
-      var(--card);
+    background: var(--card);
   }
 
   .hero__content h1 {
@@ -185,6 +191,10 @@ const categorySummary = sidebar.categories.slice(0, 3);
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     margin-top: 1.25rem;
+  }
+
+  .currently {
+    margin-top: 1.5rem;
   }
 
   .category-card h2 {
