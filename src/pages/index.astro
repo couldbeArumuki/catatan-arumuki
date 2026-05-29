@@ -21,55 +21,51 @@ const categorySummary = sidebar.categories.slice(0, 3);
 ---
 
 <BaseLayout title="Home" description="Catatan hangat sehari-hari dari Arumuki." sidebar={sidebar}>
-  <section class="hero card">
+  <section class="hero card" style="text-align: center; border: none; padding-top: 0; box-shadow: none;">
     <div class="hero__content">
-      <p class="hero__eyebrow">Welcome to</p>
-      <h1>{siteProfile.owner}</h1>
-      <p class="hero__tagline">{siteProfile.tagline}</p>
-      <p>{siteProfile.description}</p>
-      <div class="hero__cta">
-        <a class="hero__button" href="#latest-posts">Baca Catatanku</a>
-        <a class="hero__button hero__button--ghost" href={withBase('about/')}>Kenal Aku Lebih Dekat</a>
-      </div>
+      <img src={withBase(defaultAvatar)} alt="Arumuki avatar illustration" width="180" height="180" style="border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem;" />
+      <p class="hero__eyebrow" style="margin-bottom: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;">Hello, I'm Jane</p>
+      <h1 style="font-family: 'Georgia', serif; font-size: 2.5rem; margin: 0 0 1rem; color: var(--text); letter-spacing: 0.1em; font-weight: normal;">LIFESTYLE BLOG</h1>
+      <p style="color: var(--muted); max-width: 600px; margin: 0 auto;">Welcome to my blog, covering my everyday life journey and other favorite things. So glad you've found this blog, please enjoy and stay awhile!</p>
     </div>
-    <img src={withBase(defaultAvatar)} alt="Arumuki avatar illustration" width="320" height="320" />
   </section>
 
-  <section class="card home-search" data-home-search data-posts={JSON.stringify(homepageSearchData)}>
-    <label for="home-search-input"><strong>Search posts</strong></label>
+  <section class="card home-search" data-home-search data-posts={JSON.stringify(homepageSearchData)} style="margin-bottom: 3rem; text-align: center; border: none; box-shadow: none;">
+    <h2 style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display: inline-block; padding-left: 2rem; padding-right: 2rem;">SEARCH</h2>
     <input
       id="home-search-input"
       class="search-input"
       type="search"
-      placeholder="Cari judul, kategori, atau tag"
+      placeholder="Search posts..."
       aria-label="Search posts from homepage"
       data-home-search-input
     />
     <div class="search-results" aria-live="polite" data-home-search-results></div>
   </section>
 
-  <section class="category-grid">
-    {categorySummary.map((category) => (
-      <a class="card category-card" href={withBase(`category/${encodeURIComponent(category.name)}/`)}>
-        <h2>{category.name}</h2>
-        <p>{category.count} post tersedia</p>
-      </a>
-    ))}
-  </section>
-
   <section id="latest-posts">
-    <h2>Latest entries</h2>
+    <h2 style="font-size: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; text-align: center;">LATEST ENTRIES</h2>
     <div class="post-grid">
       {posts.slice(0, 5).map((post) => {
         const slug = getPostSlug(post);
         const coverImage = withBase(post.data.coverImage ?? defaultCoverImage);
         return (
           <article class="post-card">
-            <a
-            class="post-card__media"
-            href={withBase(`posts/${slug}/`)}
-            aria-label={`Read ${post.data.title}`}
-            >
+            <div class="post-meta">
+              <span>{formatDate(post.data.date)}</span>
+              <span>|</span>
+              <a class="badge" href={withBase(`category/${encodeURIComponent(post.data.category)}/`)}>
+                {post.data.category}
+              </a>
+            </div>
+            
+            <div class="post-card__body">
+              <h3>
+                <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
+              </h3>
+            </div>
+            
+            <a class="post-card__media" href={withBase(`posts/${slug}/`)}>
               <img
                 src={coverImage}
                 alt={post.data.title}
@@ -78,238 +74,15 @@ const categorySummary = sidebar.categories.slice(0, 3);
                 height="360"
               />
             </a>
-            <div class="post-card__body">
-            <h3>
-              <a href={withBase(`posts/${slug}/`)}>{post.data.title}</a>
-            </h3>
-            <div class="post-meta">
-              <span>{formatDate(post.data.date)}</span>
-              <a
-                class="badge"
-                href={withBase(`category/${encodeURIComponent(post.data.category)}/`)}
-              >
-                {post.data.category}
-              </a>
-            </div>
-            {post.data.tags?.length ? (
-              <div class="tags">
-                {post.data.tags.map((tag) => (
-                  <span class="tag">{tag}</span>
-                ))}
-              </div>
-            ) : null}
-            <p>{post.data.description}</p>
-            </div>
+            
+            <p style="color: var(--text);">{post.data.description}</p>
+            <a href={withBase(`posts/${slug}/`)} style="display: inline-block; margin-top: 1rem; border: 1px solid var(--border); padding: 0.5rem 1rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em;">Read More</a>
           </article>
         );
       })}
     </div>
   </section>
-
-  <section class="card currently">
-    <h2>Currently</h2>
-    <ul class="list">
-      <li><strong>Listening:</strong> city pop playlist sambil hujan kecil.</li>
-      <li><strong>Reading:</strong> manga slice-of-life yang bikin hati adem.</li>
-      <li><strong>At:</strong> sudut kedai kopi favorit, dekat jendela.</li>
-    </ul>
-  </section>
 </BaseLayout>
-
-<style>
-  .post-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-5);
-  }
-
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-    align-items: center;
-    background: var(--card);
-  }
-
-  .hero__content h1 {
-    margin: 0.2rem 0 0.4rem;
-    font-size: clamp(2rem, 4.5vw, 2.8rem);
-    line-height: 1.15;
-    font-weight: 800;
-  }
-
-  .hero__eyebrow {
-    margin: 0;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .hero__tagline {
-    margin: 0.1rem 0 0.55rem;
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 1.15rem;
-  }
-
-  .hero img {
-    width: 100%;
-    max-width: 280px;
-    justify-self: center;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
-    background: var(--bg);
-    padding: 0.5rem;
-    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  .hero img:hover {
-    transform: translateY(-8px) scale(1.02);
-  }
-
-  .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 1.5rem;
-  }
-
-  .hero__button {
-    padding: 0.65rem 1.25rem;
-    border-radius: 999px;
-    border: 2px solid var(--accent);
-    background: var(--accent);
-    color: #ffffff;
-    font-size: 0.95rem;
-    font-weight: 700;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  .hero__button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(255, 142, 175, 0.3);
-    color: #ffffff;
-  }
-
-  .hero__button--ghost {
-    background: transparent;
-    color: var(--accent);
-  }
-  
-  .hero__button--ghost:hover {
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    box-shadow: none;
-  }
-
-  .home-search {
-    margin-top: var(--space-5);
-  }
-
-  .category-grid {
-    display: grid;
-    gap: var(--space-4);
-    grid-template-columns: 1fr;
-    margin-top: var(--space-5);
-  }
-
-  .currently {
-    margin-top: var(--space-5);
-  }
-
-  .category-card {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  .category-card:hover {
-    background: var(--accent);
-    color: #ffffff;
-    border-color: var(--accent);
-  }
-
-  .category-card:hover p {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .category-card h2 {
-    margin: 0 0 0.25rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-  }
-
-  .category-card p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  .post-card {
-    display: flex;
-    flex-direction: column;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--card);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
-  }
-  
-  .post-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
-  }
-
-  .post-card__media {
-    display: block;
-    aspect-ratio: 16 / 9;
-    background: color-mix(in srgb, var(--bg) 90%, transparent);
-    overflow: hidden;
-  }
-
-  .post-card__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 0;
-    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  .post-card:hover .post-card__media img {
-    transform: scale(1.05);
-  }
-
-  .post-card__body {
-    padding: var(--space-5);
-    display: grid;
-    gap: var(--space-3);
-  }
-  
-  .post-card__body h3 {
-    margin: 0;
-    font-size: clamp(1.15rem, 1.05rem + 0.7vw, 1.35rem);
-    font-weight: 700;
-  }
-
-  @media (min-width: 680px) {
-    .post-grid,
-    .category-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 900px) {
-    .hero {
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
-    }
-
-    .post-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-</style>
 
 <script is:inline type="module">
   const root = document.querySelector('[data-home-search]');
