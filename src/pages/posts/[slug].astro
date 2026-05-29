@@ -155,8 +155,8 @@ const relatedPosts =
 
   .post-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 
   .post-card {
@@ -186,5 +186,17 @@ const relatedPosts =
     margin: 0;
     font-size: 1rem;
     line-height: 1.4;
+  }
+
+  @media (min-width: 680px) {
+    .post-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .post-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 </style>
