@@ -105,6 +105,12 @@ const searchData = searchIndex.map((post) => ({
     overflow: hidden;
     aspect-ratio: 1 / 1;
     background: rgba(106, 74, 60, 0.08);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .popular-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 
   .popular-item img {
@@ -113,6 +119,11 @@ const searchData = searchIndex.map((post) => ({
     object-fit: cover;
     display: block;
     border-radius: 0;
+    transition: transform 0.5s ease;
+  }
+  
+  .popular-item:hover img {
+    transform: scale(1.1);
   }
 
   .popular-placeholder {
@@ -131,8 +142,8 @@ const searchData = searchIndex.map((post) => ({
     padding: 0.75rem;
     color: #fff;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.7));
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
   }
 
   .popular-overlay small {
